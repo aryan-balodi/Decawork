@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>License Management</h1>
+</div>
+
+{% for lic in licenses %}
+<div class="license-card">
+    <div class="license-header">
+        <h3>{{ lic['icon'] }} {{ lic['software'] }}</h3>
+        <span class="badge {% if lic['available_seats'] == 0 %}badge-disabled{% elif lic['available_seats'] <= 2 %}badge-admin{% else %}badge-active{% endif %}">
+            {{ lic['available_seats'] }} seats available
+        </span>
+    </div>
+
+    <div class="seat-bar">
+        {% set pct = (lic['used_seats'] / lic['total_seats'] * 100) if lic['total_seats'] > 0 else 0 %}
+        <div class="seat-bar-fill {% if pct > 80 %}high{% elif pct > 60 %}medium{% endif %}"
+             style="width: {{ pct }}%"></div>
+    </div>
+    <div class="seat-info">
+        {{ lic['used_seats'] }} / {{ lic['total_seats'] }} seats used
+    </div>
+
+    {% if lic['assigned_users'] %}
+    <div class="assigned-users">
+        {% for au in lic['assigned_users'] %}
+        <span class="assigned-user-chip">
+            {{ au['name'] }} ({{ au['email'] }})
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if lic['available_seats'] > 0 %}
+    <form class="assign-form" method="post" action="/licenses/{{ lic['id'] }}/assign">
+        <select name="user_id" required>
+            <option value="">Select a user to assign...</option>
+            {% for u in all_users %}
+            <option value="{{ u['id'] }}">{{ u['name'] }} ({{ u['email'] }})</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+    </form>
+    {% else %}
+    <p style="color: var(--danger); font-size: 13px; padding-top: 12px; border-top: 1px solid var(--border);">
+        ⚠️ No seats available. Revoke an existing assignment to free up a seat.
+    </p>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

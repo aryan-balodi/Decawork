@@ -1,0 +1,20 @@
+[project]
+name = "decawork"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiofiles>=25.1.0",
+    "aiosqlite>=0.22.1",
+    "browser-use>=0.12.6",
+    "fastapi>=0.135.3",
+    "jinja2>=3.1.6",
+    "langchain-google-genai>=4.2.1",
+    "langchain-openai>=1.1.9",
+    "playwright>=1.58.0",
+    "python-dotenv>=1.2.1",
+    "python-multipart>=0.0.26",
+    "slack-bolt>=1.28.0",
+    "uvicorn>=0.44.0",
+]
