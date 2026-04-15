@@ -12,7 +12,8 @@ import os
 import sys
 from dotenv import load_dotenv
 
-from browser_use import Agent, Browser, BrowserConfig
+from browser_use import Agent
+from browser_use.browser.browser import Browser, BrowserConfig
 from browser_use.llm import ChatGoogle
 from agent.orchestrator import build_agent_task
 
