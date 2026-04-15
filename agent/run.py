@@ -9,14 +9,11 @@ Usage:
 
 import asyncio
 import os
-import asyncio
-import os
 import sys
 from dotenv import load_dotenv
 
 from browser_use import Agent
-from browser_use.llm import ChatOpenAI
-from browser_use.tools.registry.views import ActionModel
+from browser_use.llm import ChatGoogle
 from agent.orchestrator import build_agent_task
 
 SYSTEM_PROMPT = """You are a highly capable IT Support Administrator.
@@ -25,48 +22,31 @@ Always verify your actions. Return a final summary containing status, details, a
 Do NOT attempt to guess endpoints or use direct API calls; use the UI provided.
 """
 
-# Monkey-patch browser-use's ActionModel so Groq doesn't reject empty schemas ("items" bug).
-original_schema = ActionModel.model_json_schema
-@classmethod
-def patched_schema(cls, **kwargs):
-    schema = original_schema.__get__(None, cls)(**kwargs)
-    if 'properties' not in schema or len(schema.get('properties', {})) == 0:
-        schema['properties'] = {
-            'dummy_field': {
-                'type': 'string',
-                'description': 'Dummy field to bypass LLM schema validation. Ignore.'
-            }
-        }
-    return schema
-ActionModel.model_json_schema = patched_schema
-
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-from browser_use.llm import ChatGoogle
 
 def get_llm():
+    """Initialize the LLM (Gemini 2.5 Flash via browser-use's native ChatGoogle wrapper)."""
     load_dotenv()
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         raise ValueError("GOOGLE_API_KEY environment variable not set.")
-        
+
     llm = ChatGoogle(
-        model="gemini-2.5-flash",
+        model="gemini-2.5-flash-lite",
         api_key=api_key,
         temperature=0.0,
     )
-    
+
     return llm
 
 
 async def run_agent(task_description: str, headless: bool = False):
     """
     Run the IT agent to complete a task.
-    
+
     Args:
         task_description: Natural language IT support request.
         headless: Whether to run the browser in headless mode.
-    
+
     Returns:
         The agent's result/history.
     """
@@ -79,15 +59,12 @@ async def run_agent(task_description: str, headless: bool = False):
     print(f"{'🔇 Headless mode' if headless else '👁️  Browser visible'}")
     print("─" * 60)
 
-
-    # In browser-use 0.12.6, Browser options are passed differently,
-    # but the defaults are fine for testing headless=False
     agent = Agent(
         task=task,
         llm=llm,
         extend_system_message=SYSTEM_PROMPT,
-        max_actions_per_step=5,
-        max_failures=3,
+        max_actions_per_step=3,
+        max_failures=5,
         use_vision=False,
     )
 
