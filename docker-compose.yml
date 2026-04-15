@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   admin_panel:
     build: .
@@ -11,6 +9,26 @@ services:
       - ./admin_panel.db:/app/admin_panel.db
     restart: always
 
+  # The magic Auto-SSL Reverse Proxy for HTTPS
+  caddy:
+    image: caddy:2
+    container_name: caddy_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      # Caddy handles Let's Encrypt certs automatically as long as the subdomain points to this server's IP
+      # and port 80 and 443 are open!
+    command: caddy reverse-proxy --from it-agent.balodi.me --to http://admin_panel:8000
+    depends_on:
+      - admin_panel
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
   agent_bot:
     build: .
     container_name: it_agent_slack_bot
