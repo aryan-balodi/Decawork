@@ -19,7 +19,7 @@ services:
       - "443:443"
       # Caddy handles Let's Encrypt certs automatically as long as the subdomain points to this server's IP
       # and port 80 and 443 are open!
-    command: caddy reverse-proxy --from it-agent.balodi.me --to http://admin_panel:8000
+    command: caddy reverse-proxy --from it-admin-agent.balodi.me --to http://admin_panel:8000
     depends_on:
       - admin_panel
     volumes:
