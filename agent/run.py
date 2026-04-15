@@ -12,7 +12,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
-from browser_use import Agent
+from browser_use import Agent, Browser, BrowserConfig
 from browser_use.llm import ChatGoogle
 from agent.orchestrator import build_agent_task
 
@@ -59,7 +59,9 @@ async def run_agent(task_description: str, headless: bool = False):
     print(f"{'🔇 Headless mode' if headless else '👁️  Browser visible'}")
     print("─" * 60)
 
+    browser = Browser(config=BrowserConfig(headless=headless))
     agent = Agent(
+        browser=browser,
         task=task,
         llm=llm,
         extend_system_message=SYSTEM_PROMPT,
