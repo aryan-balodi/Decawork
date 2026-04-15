@@ -15,8 +15,7 @@
 
     <div class="seat-bar">
         {% set pct = (lic['used_seats'] / lic['total_seats'] * 100) if lic['total_seats'] > 0 else 0 %}
-        <div class="seat-bar-fill {% if pct > 80 %}high{% elif pct > 60 %}medium{% endif %}"
-             style="width: {{ pct }}%"></div>
+        <div class="seat-bar-fill {% if pct > 80 %}high{% elif pct > 60 %}medium{% endif %}" style="{{ 'width: ' ~ pct ~ '%;' }}"></div>
     </div>
     <div class="seat-info">
         {{ lic['used_seats'] }} / {{ lic['total_seats'] }} seats used

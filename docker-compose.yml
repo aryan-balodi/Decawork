@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  admin_panel:
+    build: .
+    container_name: it_admin_panel
+    ports:
+      - "8000:8000"
+    command: uvicorn admin_panel.app:app --host 0.0.0.0 --port 8000
+    volumes:
+      - ./admin_panel.db:/app/admin_panel.db
+    restart: always
+
+  agent_bot:
+    build: .
+    container_name: it_agent_slack_bot
+    # --ipc=host is CRITICAL for Chrome so it has enough shared memory to run
+    ipc: host
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
+      - ADMIN_PANEL_URL=http://admin_panel:8000
+    command: python -m slack_bot.bot
+    depends_on:
+      - admin_panel
+    restart: always

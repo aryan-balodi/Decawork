@@ -24,7 +24,7 @@ Do NOT attempt to guess endpoints or use direct API calls; use the UI provided.
 
 
 def get_llm():
-    """Initialize the LLM (Gemini 2.5 Flash via browser-use's native ChatGoogle wrapper)."""
+    """Initialize the LLM."""
     load_dotenv()
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
