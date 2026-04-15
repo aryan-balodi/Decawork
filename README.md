@@ -1,6 +1,7 @@
-# 🤖 Decawork IT Agent
-
 An AI-powered IT support agent that takes natural language requests and completes them by navigating a web-based admin panel — using real browser automation, not API shortcuts.
+
+**Live Demo:** [https://it-admin-agent.balodi.me](https://it-admin-agent.balodi.me)
+
 
 ## Architecture
 
@@ -25,20 +26,19 @@ An AI-powered IT support agent that takes natural language requests and complete
 │                   ▼                              │
 │       ┌───────────────────────┐                  │
 │       │  Mock IT Admin Panel  │                  │
-│       │  (FastAPI + SQLite)   │                  │
-│       └───────────────────────┘                  │
+│       │  (FastAPI + aiosqlite)│                  │
+│       └───────────┬───────────┘                  │
 └─────────────────────────────────────────────────┘
 ```
 
 ## Tech Stack
 
-| Component | Technology |
-|---|---|
-| Admin Panel | FastAPI + Jinja2 + SQLite |
+| Admin Panel | FastAPI + Jinja2 + aiosqlite |
 | Browser Automation | [browser-use](https://github.com/browser-use/browser-use) |
-| LLM | Gemini 2.0 Flash (free tier) |
+| LLM | Gemini 2.5 Flash-Lite |
 | Chat Trigger | Slack Bot (slack-bolt, Socket Mode) |
 | Package Manager | uv |
+
 
 ## Quick Start
 
@@ -137,6 +137,9 @@ Decawork/
 
 3. **FastAPI over Flask** — Async-native (matches browser-use's async nature), Pydantic models, auto Swagger docs at `/docs`.
 
-4. **SQLite** — Zero-config, file-based, perfect for a mock panel. No Docker or database server needed.
+4. **aiosqlite** — Async-native SQLite driver that prevents blocking the FastAPI event loop during database operations. File-based, zero-config, and perfect for persistent storage in Docker volumes.
 
 5. **Socket Mode for Slack** — No public URL needed, works locally behind a firewall.
+
+6. **AWS EC2 + Docker + Caddy** — Fully containerized deployment on a `t3.small` instance. Uses `ipc: host` for performant headless browser execution and Caddy for automatic Let's Encrypt SSL.
+
