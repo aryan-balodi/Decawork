@@ -26,9 +26,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
 
-volumes:
-  caddy_data:
-  caddy_config:
+
   agent_bot:
     build: .
     container_name: it_agent_slack_bot
@@ -43,3 +41,7 @@ volumes:
     depends_on:
       - admin_panel
     restart: always
+
+volumes:
+  caddy_data:
+  caddy_config:
